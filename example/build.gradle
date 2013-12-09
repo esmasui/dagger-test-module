@@ -1,0 +1,17 @@
+apply plugin: 'java'
+
+targetCompatibility = '1.6'
+sourceCompatibility = '1.6'
+
+dependencies {
+    repositories {
+        mavenCentral()
+        mavenLocal()
+    }
+
+    compile "com.squareup.dagger:dagger:1.1.0"
+    compile "com.squareup.dagger:dagger-compiler:1.1.0"
+    testCompile "junit:junit:4.10"
+    testCompile "org.mockito:mockito-all:1.9.5"
+    testCompile "com.uphyca.testing:dagger-test-module:0.9.0-SNAPSHOT"
+}

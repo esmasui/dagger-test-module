@@ -1,0 +1,4 @@
+rootProject.name = 'dagger-test-module'
+
+include ':dagger-test-module'
+

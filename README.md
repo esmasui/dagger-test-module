@@ -7,9 +7,38 @@ Testing library which uses annotation processing to generate module for test cod
 Usage
 -----
 
+```Java
+@TestModule
+public class CoffeeMakerTest {
+
+    @Inject CoffeeMaker coffeeMaker;
+    @TestProvides @Mock Heater heater;
+
+    @Before public void setUp() {
+        MockitoAnnotations.initMocks(this);
+        ObjectGraph.create(new DripCoffeeModule(), TestModules.from(this)).
+                    inject(this);
+    }
+
+    @Test public void testHeaterIsTurnedOnAndThenOff() {
+        Mockito.when(heater.isHot()).thenReturn(true);
+        coffeeMaker.brew();
+        Mockito.verify(heater, Mockito.times(1)).on();
+        Mockito.verify(heater, Mockito.times(1)).off();
+    }
+}
+
+```
+
+Download
+-----
+
 Gradle
 ```groovy
-compile 'com.uphyca.testing:dagger-test-module:0.9.+'
+compile "com.squareup.dagger:dagger:${daggerVersion}"
+compile "com.squareup.dagger:dagger-compiler:${daggerVersion}"
+
+testCompile 'com.uphyca.testing:dagger-test-module:0.9.+'
 ```
 
 License

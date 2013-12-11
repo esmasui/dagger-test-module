@@ -35,11 +35,12 @@ public class ModuleBuilder {
         builder.append("package ")
                .append(classPackage)
                .append(";\n\n");
+        builder.append("import javax.inject.Singleton;\n");
         builder.append("import dagger.Module;\n");
         builder.append("import dagger.Provides;\n\n");
         builder.append("@Module(injects = ")
                .append(targetClass)
-               .append(".class, overrides = true)\n");
+               .append(".class, complete = false, overrides = true)\n");
         builder.append("public final class ")
                .append(className)
                .append(" {\n");
@@ -60,6 +61,7 @@ public class ModuleBuilder {
         for (VariableElement each : variableElements) {
             TypeElement typeElement = (TypeElement) typeUtil.asElement(each.asType());
             builder.append("@Provides\n");
+            builder.append("@Singleton\n");
             builder.append(typeElement.getQualifiedName())
                    .append(' ')
                    .append("provide$$")

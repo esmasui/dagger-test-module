@@ -5,15 +5,7 @@ import static javax.tools.Diagnostic.Kind.ERROR;
 
 import java.io.IOException;
 import java.io.Writer;
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.Filer;
@@ -21,11 +13,9 @@ import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.AnnotationValue;
 import javax.lang.model.element.Element;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
-import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Elements;
 import javax.lang.model.util.SimpleElementVisitor6;
 import javax.lang.model.util.Types;
@@ -86,39 +76,10 @@ public class TestModuleProcessor extends AbstractProcessor {
 
     private void parseTestModule(Element element, Map<TypeElement, ModuleBuilder> targetClassMap) {
         TypeElement typeElement = (TypeElement) element;
-
-        AnnotationMirror testModule = acquireAnnotation(typeElement, TestModule.class);
-        AnnotationValue testModuleValue = testModule.getElementValues()
-                                                    .values()
-                                                    .iterator()
-                                                    .next();
-        TypeElement testModuleTypeValue = (TypeElement) typeUtils.asElement((TypeMirror) testModuleValue.getValue());
-        ModuleBuilder moduleBuilder = getOrCreateTargetClass(targetClassMap, typeElement, testModuleTypeValue);
+        ModuleBuilder moduleBuilder = getOrCreateTargetClass(targetClassMap, typeElement, typeElement);
         InjectVisitor visitor = new InjectVisitor();
         findInjections(typeElement, visitor);
         moduleBuilder.addInjections(visitor.getVariableElements());
-    }
-
-    private static AnnotationMirror acquireAnnotation(TypeElement type, Class<? extends Annotation> annotType) {
-        for (AnnotationMirror each : type.getAnnotationMirrors()) {
-            if (each.getAnnotationType()
-                    .toString()
-                    .equals(annotType.getName())) {
-                return each;
-            }
-        }
-        return null;
-    }
-
-    private TypeElement asElement(String fqcn) {
-        return elementUtils.getTypeElement(fqcn);
-    }
-
-    private List<TypeElement> asList(TypeElement... typeElements) {
-        if (typeElements == null) {
-            return Collections.emptyList();
-        }
-        return Arrays.asList(typeElements);
     }
 
     private void findInjections(TypeElement typeElement, InjectVisitor visitor) {

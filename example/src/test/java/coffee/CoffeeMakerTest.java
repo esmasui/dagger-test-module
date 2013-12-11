@@ -15,33 +15,28 @@
  */
 package coffee;
 
-import dagger.Module;
+import com.uphyca.testing.dagger.TestModule;
+import com.uphyca.testing.dagger.TestModules;
+import com.uphyca.testing.dagger.TestProvides;
 import dagger.ObjectGraph;
-import dagger.Provides;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
 
 import javax.inject.Inject;
-import javax.inject.Singleton;
 
+@TestModule
 public class CoffeeMakerTest {
+
     @Inject CoffeeMaker coffeeMaker;
-    @Inject Heater heater;
+    @TestProvides @Mock Heater heater;
 
     @Before public void setUp() {
-        ObjectGraph.create(new TestModule()).inject(this);
-    }
-
-    @Module(
-            includes = DripCoffeeModule.class,
-            injects = CoffeeMakerTest.class,
-            overrides = true
-    )
-    static class TestModule {
-        @Provides @Singleton Heater provideHeater() {
-            return Mockito.mock(Heater.class);
-        }
+        MockitoAnnotations.initMocks(this);
+        ObjectGraph.create(new DripCoffeeModule(), TestModules.from(this)).
+                    inject(this);
     }
 
     @Test public void testHeaterIsTurnedOnAndThenOff() {

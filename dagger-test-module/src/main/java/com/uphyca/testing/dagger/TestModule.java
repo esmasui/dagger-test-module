@@ -13,5 +13,4 @@ import java.lang.annotation.Target;
 @Documented
 @Inherited
 public @interface TestModule {
-    Class<?> value();
 }

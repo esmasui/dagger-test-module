@@ -17,6 +17,8 @@ public abstract class TestModules {
                                                              .getName() + TestModuleProcessor.SUFFIX);
             Constructor<?> constructor = testModuleClass.getConstructor(testCase.getClass());
             return constructor.newInstance(testCase);
+        } catch (ClassNotFoundException e) {
+            throw new IllegalStateException("Test class should annotated with @TestModule", e);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

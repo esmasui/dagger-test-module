@@ -4,8 +4,10 @@ package com.uphyca.testing.dagger.internal;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
+import javax.lang.model.type.DeclaredType;
 import javax.lang.model.util.Types;
 
 public class ModuleBuilder {
@@ -62,6 +64,10 @@ public class ModuleBuilder {
             TypeElement typeElement = (TypeElement) typeUtil.asElement(each.asType());
             builder.append("@Provides\n");
             builder.append("@Singleton\n");
+            String qualifier = acquireQualifier(each);
+            if (qualifier != null) {
+                builder.append("@" + qualifier + "\n");
+            }
             builder.append(typeElement.getQualifiedName())
                    .append(' ')
                    .append("provide$$")
@@ -78,5 +84,24 @@ public class ModuleBuilder {
 
     public void addInjections(List<VariableElement> variableElements) {
         this.variableElements.addAll(variableElements);
+    }
+
+    private String acquireQualifier(VariableElement variable) {
+        for (AnnotationMirror each : variable.getAnnotationMirrors()) {
+            DeclaredType annotationType = each.getAnnotationType();
+            for (AnnotationMirror annotationMirror : annotationType.asElement()
+                                                                   .getAnnotationMirrors()) {
+                TypeElement type = (TypeElement) annotationMirror.getAnnotationType()
+                                                                 .asElement();
+                if (type.getQualifiedName()
+                        .toString()
+                        .equals("javax.inject.Qualifier")) {
+                    TypeElement qualifierType = (TypeElement) annotationType.asElement();
+                    return qualifierType.getQualifiedName()
+                                        .toString();
+                }
+            }
+        }
+        return null;
     }
 }

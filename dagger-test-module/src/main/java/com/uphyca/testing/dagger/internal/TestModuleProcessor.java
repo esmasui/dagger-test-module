@@ -7,10 +7,7 @@ import java.io.IOException;
 import java.io.Writer;
 import java.util.*;
 
-import javax.annotation.processing.AbstractProcessor;
-import javax.annotation.processing.Filer;
-import javax.annotation.processing.ProcessingEnvironment;
-import javax.annotation.processing.RoundEnvironment;
+import javax.annotation.processing.*;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.Element;
@@ -24,6 +21,7 @@ import javax.tools.JavaFileObject;
 import com.uphyca.testing.dagger.TestModule;
 import com.uphyca.testing.dagger.TestProvides;
 
+@SupportedAnnotationTypes("com.uphyca.testing.dagger.TestModule")
 public class TestModuleProcessor extends AbstractProcessor {
 
     public static final String SUFFIX = "$$TestModule";

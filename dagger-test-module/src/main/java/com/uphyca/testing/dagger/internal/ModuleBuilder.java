@@ -40,7 +40,7 @@ public class ModuleBuilder {
         builder.append("import dagger.Provides;\n\n");
         builder.append("@Module(injects = ")
                .append(targetClass)
-               .append(".class, complete = false, overrides = true)\n");
+               .append(".class, library = true, complete = false, overrides = true)\n");
         builder.append("public final class ")
                .append(className)
                .append(" {\n");

@@ -6,10 +6,6 @@ mainClassName = "coffee.CoffeeApp"
 targetCompatibility = '1.6'
 sourceCompatibility = '1.6'
 
-configurations {
-    apt
-}
-
 dependencies {
     repositories {
         mavenCentral()
@@ -21,24 +17,5 @@ dependencies {
 
     testCompile "junit:junit:4.10"
     testCompile "org.mockito:mockito-all:1.9.5"
-    testCompile "com.uphyca.testing:dagger-test-module:0.9.0-SNAPSHOT"
+    testCompile "com.uphyca.testing:dagger-test-module:0.9.1-SNAPSHOT"
 }
-
-
-//project.afterEvaluate {
-//    def aptOutputDir = project.file(new File(buildDir, "generated"))
-//    sourceSets.main.java.srcDirs += aptOutputDir.path
-//
-//    compileJava {
-//        aptOutputDir.mkdirs()
-//    }
-//
-//    compileJava.options.compilerArgs += [
-//            '-processorpath', project.configurations.apt,
-//            '-s', aptOutputDir
-//    ]
-//
-//    compileJava.source = compileJava.source.filter {
-//        !it.path.startsWith(aptOutputDir.path)
-//    }
-//}

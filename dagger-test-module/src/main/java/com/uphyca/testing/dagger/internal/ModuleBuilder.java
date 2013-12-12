@@ -8,6 +8,7 @@ import javax.lang.model.element.AnnotationMirror;
 import javax.lang.model.element.TypeElement;
 import javax.lang.model.element.VariableElement;
 import javax.lang.model.type.DeclaredType;
+import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
 
 public class ModuleBuilder {
@@ -68,8 +69,19 @@ public class ModuleBuilder {
             if (qualifier != null) {
                 builder.append("@" + qualifier + "\n");
             }
-            builder.append(typeElement.getQualifiedName())
-                   .append(' ')
+            builder.append(typeElement.getQualifiedName());
+            String[] types = acquireGenericTypes(each);
+            if (types.length > 0) {
+                builder.append('<');
+                for (int i = 0, size = types.length; i < size; ++i) {
+                    if (i > 0) {
+                        builder.append(',');
+                    }
+                    builder.append(types[i]);
+                }
+                builder.append('>');
+            }
+            builder.append(' ')
                    .append("provide$$")
                    .append(each.getSimpleName())
                    .append("(){\n");
@@ -84,6 +96,17 @@ public class ModuleBuilder {
 
     public void addInjections(List<VariableElement> variableElements) {
         this.variableElements.addAll(variableElements);
+    }
+
+    private String[] acquireGenericTypes(VariableElement variable) {
+        DeclaredType declaredType = (DeclaredType) variable.asType();
+        List<String> types = new ArrayList<String>();
+        for (TypeMirror typeMirror : declaredType.getTypeArguments()) {
+            TypeElement type = (TypeElement) typeUtil.asElement(typeMirror);
+            types.add(type.getQualifiedName()
+                          .toString());
+        }
+        return types.toArray(new String[types.size()]);
     }
 
     private String acquireQualifier(VariableElement variable) {

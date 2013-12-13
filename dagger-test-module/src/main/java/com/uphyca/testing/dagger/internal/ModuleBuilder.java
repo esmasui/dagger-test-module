@@ -3,10 +3,9 @@ package com.uphyca.testing.dagger.internal;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-import javax.lang.model.element.AnnotationMirror;
-import javax.lang.model.element.TypeElement;
-import javax.lang.model.element.VariableElement;
+import javax.lang.model.element.*;
 import javax.lang.model.type.DeclaredType;
 import javax.lang.model.type.TypeMirror;
 import javax.lang.model.util.Types;
@@ -120,8 +119,26 @@ public class ModuleBuilder {
                         .toString()
                         .equals("javax.inject.Qualifier")) {
                     TypeElement qualifierType = (TypeElement) annotationType.asElement();
-                    return qualifierType.getQualifiedName()
-                                        .toString();
+                    String qualifiedName = qualifierType.getQualifiedName()
+                                                        .toString();
+                    if (!qualifiedName.equals("javax.inject.Named")) {
+                        return qualifiedName;
+                    }
+
+                    Map<? extends ExecutableElement, ? extends AnnotationValue> elementValues = each.getElementValues();
+                    for (Map.Entry<? extends ExecutableElement, ? extends AnnotationValue> elementValue : elementValues.entrySet()) {
+
+                        if (elementValue.getKey()
+                                        .getSimpleName()
+                                        .toString()
+                                        .equals("value")) {
+                            String value = elementValue.getValue()
+                                                       .getValue()
+                                                       .toString();
+                            return qualifiedName + "(\"" + value + "\")";
+                        }
+                    }
+                    return qualifiedName;
                 }
             }
         }
